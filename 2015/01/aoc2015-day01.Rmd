@@ -1,0 +1,89 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.11.3
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+# Advent of Code (2015)
+
+```{r}
+txt <- scan('puzzle.aoc', what='character', sep='\n', fileEncoding='utf8')
+vec <- strsplit(txt, '')[[1]]
+```
+
+## Day 1: Not Quite Lisp
+Santa was hoping for a white Christmas, but his weather machine's "snow" function is powered by stars, and he's fresh out! To save Christmas, he needs you to collect **fifty stars** by December 25th.
+
+Collect stars by helping Santa solve puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants **one star**. Good luck!
+
+Here's an easy puzzle to warm you up.
+
+Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the directions he got are a little confusing. He starts on the ground floor (floor 0) and then follows the instructions one character at a time.
+
+An opening parenthesis, (, means he should go up one floor, and a closing parenthesis, ), means he should go down one floor.
+
+The apartment building is very tall, and the basement is very deep; he will never find the top or bottom floors.
+
+For example:
+
+- `(())` and `()()` both result in floor `0`.
+- `(((` and `(()(()(` both result in floor `3`.
+- `))(((((` also results in floor `3`.
+- `())` and `))(` both result in floor `-1` (the first basement level).
+- `)))` and `)())())` both result in floor `-3`.
+
+
+### Part 1: ***To what floor do the instructions take Santa?***
+
+```{r}
+indices_left <- which(vec=='(')
+indices_right <- which(vec==')')
+
+# replace '(',')' with respective number
+vec2 <- replace(vec, indices_left, 1)
+vec2 <- replace(vec2, indices_right, -1)
+vec2 <- strtoi(vec2)
+```
+
+It is this floor!
+
+```{r}
+sum(vec2)
+```
+
+### Part 2
+Now, given the same instructions, find the **position** of the first character that causes him to enter the basement (floor `-1`). The first character in the instructions has position `1`, the second character has position `2`, and so on.
+
+For example:
+
+- `)` causes him to enter the basement at character position `1`.
+- `()())` causes him to enter the basement at character position `5`.
+
+***What is the position of the character that causes Santa to first enter the basement?***
+
+```{r}
+out <- 0; index <- 0; done <- FALSE
+for (x in vec2) {
+  if (out == -1 && i > 1) {
+    done <- TRUE
+  }
+  if (!done) {
+    out <- out + x
+    index <- index + 1
+  }
+}
+```
+
+Its this Instruction!
+
+```{r}
+index
+```

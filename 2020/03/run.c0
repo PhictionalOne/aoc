@@ -1,0 +1,52 @@
+#use <conio>
+#use <file>
+#use <parse>
+#use <string>
+
+#use <queue>
+
+int passes(int right, int down) {
+  file_t f    = file_read("puzzle.aoc");
+  queue lines = queue_new();
+  int n;
+
+  /* read file into a list of lines */
+  for (n = 0; !file_eof(f); n++) 
+    queue_enq(lines, file_readline(f));
+
+  string[] rows = alloc_array(string, n);
+  for (int i = 0; i < n; i++) {
+    rows[i] = queue_deq(lines);
+  }
+
+  int trees = 0;
+  int x = 0;
+  int i = 0;
+
+  for (int y = 0; y < n; y+= down) {
+    trees += (string_charat(rows[y], x) == '#') ? 1 : 0;
+    x = (x + right) % 31;
+    i++;
+  }
+    
+  printint(i);println("");
+  return trees;
+}
+
+
+
+int main() {
+  int strat1 = passes(1,1);
+  int strat2 = passes(3,1);
+  int strat3 = passes(5,1);
+  int strat4 = passes(7,1);
+  int strat5 = passes(1,2);
+  printf("gefundene Bäume (strat1): %d\n", strat1);
+  printf("gefundene Bäume (strat2): %d\n", strat2);
+  printf("gefundene Bäume (strat3): %d\n", strat3);
+  printf("gefundene Bäume (strat4): %d\n", strat4);
+  printf("gefundene Bäume (strat5): %d\n", strat5);
+
+  printf("Produkt: %d", (strat1*strat2*strat3*strat4*strat5));
+  return 0;
+}

@@ -1,0 +1,42 @@
+#use <conio>
+#use <file>
+#use <parse>
+#use <string>
+
+#use <queue>
+
+int main() {
+  file_t f    = file_read("puzzle.aoc");
+  queue lines = queue_new();
+  int n;
+
+  /* read file into a list of lines */
+  for (n = 0; !file_eof(f); n++) 
+    queue_enq(lines, file_readline(f));
+
+  int[] numbers = alloc_array(int, n);
+
+  for (int i = 0; !queue_is_empty(lines); i++) {
+    numbers[i] = parse_ints(queue_deq(lines),10)[0];
+  }
+
+  int x;
+  int y;
+  int z;
+  for (int i = 0; i < n; i++) {
+    x = numbers[i];
+
+    for (int j = i+1; j < n; j++) {
+        y = numbers[j];
+
+        for (int k = j+1; k < n; k++) {
+            z = numbers[k];
+            if (x+y+z == 2020)
+                printf("x = %d\ny = %d\nz = %d\nx * y * z= %d", 
+                       x, y, z, (x*y*z));
+        }
+    }
+  }
+
+  return 0;
+}

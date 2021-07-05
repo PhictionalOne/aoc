@@ -1,0 +1,106 @@
+#use <conio>
+#use <file>
+#use <parse>
+#use <string>
+
+#use <queue>
+
+struct pass {
+    char required;
+    int lower_bound;
+    int upper_bound;
+    string password;
+};
+typedef struct pass* pass;
+
+bool is_valid_new(pass p) {
+    bool pos1 = (string_charat(p->password, p->lower_bound-1) == p->required);
+    bool pos2 = (string_charat(p->password, p->upper_bound-1) == p->required);
+
+    return (pos1 && !pos2) || (!pos1 && pos2);
+}
+
+bool is_valid(pass p) {
+    int count = 0;
+    for (int i = 0; i < string_length(p->password); i++) {
+        if (string_charat(p->password, i) == p->required) {
+            count++;
+        }
+    }
+    return p->lower_bound <= count && count <= p->upper_bound;
+}
+
+string[] splitter(string s) {
+    char[] cs = string_to_chararray(s);
+    string[] split = alloc_array(string,3);
+    int i = 0;
+    for (int j = 0; j < string_length(s); j++) {
+        if (cs[j] == ' ') { i++; }
+        else if (cs[j] != ':') {
+            split[i] = string_join(split[i],string_fromchar(cs[j]));
+        }
+    }
+    return split;
+}
+
+int[] bounds(string s) {
+    int[] bound = alloc_array(int, 2);
+    string[] tmp = alloc_array(string, 2);
+    tmp[0] = ""; tmp[1] = "";
+    char[] cs = string_to_chararray(s);
+    int i = 0;
+
+
+    for (int j = 0; j < string_length(s); j++) {
+        if (cs[j] == '-') { i++; }
+        else {
+            tmp[i] = string_join(tmp[i], string_fromchar(cs[j]));
+        }
+    }
+    bound[0] = parse_ints(tmp[0], 10)[0];
+    bound[1] = parse_ints(tmp[1], 10)[0];
+    return bound;
+}
+
+
+int passes() {
+  file_t f    = file_read("puzzle.aoc");
+  queue lines = queue_new();
+  int n;
+
+  /* read file into a list of lines */
+  for (n = 0; !file_eof(f); n++) 
+    queue_enq(lines, file_readline(f));
+
+  pass[] passwords = alloc_array(pass, n);
+
+  string[] split = alloc_array(string, 3);
+  int[] bound = alloc_array(int, 2);
+
+  for (int i = 0; !queue_is_empty(lines); i++) {
+    split = splitter(queue_deq(lines));
+    bound = bounds(split[0]);
+
+    passwords[i] = alloc(struct pass);
+    passwords[i]->required = string_charat(split[1], 0);
+    passwords[i]->lower_bound = bound[0];
+    passwords[i]->upper_bound = bound[1];
+    passwords[i]->password = split[2];
+  }
+
+  int valid = 0;
+
+  for (int i = 0; i < n; i++) {
+    valid += is_valid_new(passwords[i]) ? 1 : 0;
+
+  }
+
+  return valid;
+}
+
+
+
+int main() {
+  printf("Valide Passwörter: %d\n", passes());
+  return 0;
+}

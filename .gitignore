@@ -1,0 +1,5 @@
+# Plain jupyter notebooks are hard for version control
+# Will use .Rmd for them
+*.ipynb
+*.Rhistory
+.ipynb_checkpoints
