@@ -3,9 +3,12 @@
 ## Solved Puzzles
 - [Day 1](01/aoc2015-day01.md)
 - [Day 2](02/aoc2015-day02.md)
+- [Day 3](03/aoc2015-day3.md)
+- [Day 4](04/aoc2015-day4.md)
 
 ## Requirements
 - Jupyter Notebook with R Kernel
+- Jupyter Notebook with Python Kernel
 - Jupyter Notebook with Kotlin Kernel
 
 
