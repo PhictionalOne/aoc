@@ -5,6 +5,7 @@
 - [Day 2](02/aoc2015-day02.md)
 - [Day 3](03/aoc2015-day3.md)
 - [Day 4](04/aoc2015-day4.md)
+- [Day 5](05/aoc2015-day05.md)
 
 ## Requirements
 - Jupyter Notebook with R Kernel
