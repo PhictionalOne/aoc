@@ -9,6 +9,7 @@
 - [Day 6](06/aoc2015-day06.md)
 - [~~Day 7~~](07/aoc2015-day07.md) *unfifinished*
 - [Day 8](08/aoc2015-day08.md)
+- [Day 9](09/aoc2015-day09.md)
 
 ## Requirements
 - Jupyter Notebook with R Kernel
