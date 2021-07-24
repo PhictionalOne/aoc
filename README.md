@@ -1,5 +1,5 @@
 # Advent of Code
-* [Website](https://adventofcode.com/)
+[Advent of Code Website](https://adventofcode.com/)
 
 I strongly believe that no tool is perfect for every job. You wouldn't use a shovel for
 carpenting. It works but definitely isn't optimal.
