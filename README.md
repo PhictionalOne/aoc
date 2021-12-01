@@ -10,10 +10,12 @@ odd language, tools as I might want to learn their use.
 ## Solved Puzzles
 - [2015](2015/README.md)
 - [2020](2020/README.md)
+- [2021](2021/README.md)
 
 ## Requirements
 A multitude of things.
 
+* A Haskell installation
 * Jupyter Notebooks with the Kernels `R`, `Python` and `Kotlin` might be found.
 * A `C0` installation through the Docker Image
     [`dbatunituebingen/c0`](https://hub.docker.com/r/dbatunituebingen/c0) would be nice.
