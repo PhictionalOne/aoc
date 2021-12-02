@@ -18,6 +18,8 @@ Collect stars by solving puzzles. Two puzzles will be made available on each
 day in the Advent calendar; the second puzzle is unlocked when you complete the
 first. Each puzzle grants one star. Good luck!
 
+## Part 1
+
 As the submarine drops below the surface of the ocean, it automatically
 performs a sonar sweep of the nearby sea floor. On a small screen, the sonar
 sweep report (your puzzle input) appears: each line is a measurement of the sea
@@ -68,17 +70,10 @@ measurement.
 **How many measurements are larger than the previous measurement?**
 -}
 
-myFilter :: Int -> [Int] -> [Bool]
-myFilter _ [] = []
-myFilter x (y:ys) = (x < y) : myFilter y ys
-
-
-depthIncreases :: String -> IO ()
-depthIncreases file = do
-  puzzle <- readFile file
-  let depths = map (\x -> read x :: Int) (lines puzzle)
-  let increases = myFilter (head depths) (tail depths)
-  print $ foldr (\x xs -> fromEnum x + xs) 0 increases
+partOne :: String -> Int
+partOne input = length $ filter id (zipWith (<) depths (tail depths))
+  where depths    = map (\l -> read l :: Int) (lines input)
+        
 
 {-
 ## Part 2
@@ -132,25 +127,35 @@ Consider sums of a three-measurement sliding window. **How many sums are larger
 than the previous sum?**
 -}
 
-slidingWindow :: String -> IO ()
-slidingWindow file = do
-  puzzle <- readFile file
-  let depths = map (\x -> read x :: Int) (lines puzzle)
-  let windows = zipWith3 (\a b c -> a + b + c) 
-                         (init $ init depths) 
-                         (tail $ init depths) 
-                         (tail $ tail depths)
-  let increases = myFilter (head windows) (tail windows)
-  print $ foldr (\x xs -> fromEnum x + xs) 0 increases
+partTwo :: String -> Int
+partTwo input = length $ filter id (zipWith (<) windows (tail windows))
+  where depths    = map (\l -> read l :: Int) (lines input)
+        windows   = zipWith3 (\a b c -> a + b + c) depths (tail depths) (drop 2 depths)
 
-
-
-
--- Run/Entrypoint
+{-
+#### Main
+-}
 main :: IO ()
 main = do
-  let puzzle = "puzzle.aoc"
+  puzzle <- readFile "puzzle.aoc"
   print "Part 1: How many meassurements are larger than the previous meassurement?"
-  depthIncreases puzzle
+  print $ partOne puzzle 
   print "Part 2: How many sums are larger than the previous sum?"
-  slidingWindow puzzle
+  print $ partTwo puzzle 
+
+{-
+## Run 
+
+```
+ghc --make aoc2021-day01.hs && ./aoc2021-day01 && rm *.hi *.o aoc2021-day01
+```
+
+### Output
+
+```
+"Part 1: How many meassurements are larger than the previous meassurement?"
+1665
+"Part 2: How many sums are larger than the previous sum?"
+1702
+```
+-}
