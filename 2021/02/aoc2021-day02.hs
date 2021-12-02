@@ -45,16 +45,16 @@ position by your final depth?**
 
 partOne :: String -> Int
 partOne cs = xAxis * depth
-  where (xAxis, depth) = foldr applyCommands (0,0) (map toTuple (lines cs))
-
-        toTuple :: String -> (String, Int)
-        toTuple command = (head splitted, read (head (drop 1 splitted)) :: Int)
+  where (xAxis, depth) = foldl applyCommands (0,0) (map toCommand (lines cs))
+        --                 ↑ should be used to traverse from top to bottom
+        toCommand :: String -> (String, Int)
+        toCommand command = (head splitted, read (head (tail splitted)) :: Int)
           where splitted = words command
 
-        applyCommands :: (String, Int) -> (Int, Int) -> (Int, Int)
-        applyCommands ("forward", x) (xAxis, depth) = (xAxis + x, depth)
-        applyCommands ("down",    y) (xAxis, depth) = (xAxis,     depth + y)
-        applyCommands ("up",      y) (xAxis, depth) = (xAxis,     depth - y)
+        applyCommands :: (Int, Int) -> (String, Int) -> (Int, Int)
+        applyCommands (xAxis, depth) ("forward", x) = (xAxis + x, depth)
+        applyCommands (xAxis, depth) ("down",    y) = (xAxis,     depth + y)
+        applyCommands (xAxis, depth) ("up",      y) = (xAxis,     depth - y)
 
 {-
 ## Part Two
