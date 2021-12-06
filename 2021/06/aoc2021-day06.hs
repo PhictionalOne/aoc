@@ -108,8 +108,11 @@ lanternfish n = sum                                           -- Sum of Buckets
         addToBucket n xs = take n xs ++ [(xs !! n + 1)] ++ drop (n+1) xs
 
         generations :: Int -> [Int] -> [Int]
-        generations n ns = foldl (\xs x -> rules xs) ns [1..n]
+        generations n ns = foldr (\x xs -> rules xs) ns [1..n]
 
+        -- | The input i = [1,2,5,2] is toLifecycle i == [0,1,2,0,0,1,0,0,0]
+        -- and therefore the days develop as follows
+        --     [0,1,2,0,0,1,0,0,0] ⇝ [1,2,0,0,1,0,0,0] ⇝ [2,0,0,1,0,0,1,0,1]
         rules :: [Int] -> [Int]
         rules(zeros:rest) = take 6 rest ++ [(rest !! 6) + zeros] ++ drop 7 rest ++ [zeros]
 
