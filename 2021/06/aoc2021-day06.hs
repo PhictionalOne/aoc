@@ -79,8 +79,6 @@ there would be a total of **`5934`**.
 Find a way to simulate lanternfish. **How many lanternfish would there be after
 80 days?**
 -}
-{-# LANGUAGE ParallelListComp #-}
-import Data.List
 import Data.List.Split
 
 {-
@@ -100,7 +98,7 @@ lanternfish n = length
 lanternfish :: Int -> String -> Int
 lanternfish n = sum                                           -- Sum of Buckets
               . generations n                                 -- Simulate days
-              . toLifecycle (replicate 9 0)   -- Build Lifecycle buckets
+              . toLifecycle (replicate 9 0)                   -- Build Lifecycle buckets
               . (map (\x -> read x :: Int))                   -- Read input
               . (split (dropDelims $ oneOf [','])) 
   where toLifecycle :: [Int] -> [Int] -> [Int]
