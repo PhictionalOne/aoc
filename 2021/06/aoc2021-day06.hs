@@ -40,7 +40,7 @@ of the ages of several hundred nearby lanternfish (your puzzle input). For
 example, suppose you were given the following list:
 
 ```
-3,4,3,1,2
+3,4,3,1,2 
 ```
 
 This list means that the first fish has an internal timer of `3`, the second
