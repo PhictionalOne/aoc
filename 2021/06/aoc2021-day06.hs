@@ -1,0 +1,154 @@
+{-
+# Day 6: Lanternfish
+
+The sea floor is getting steeper. Maybe the sleigh keys got carried this way?
+
+A massive school of glowing lanternfish swims past. They must spawn quickly to
+reach such large numbers - maybe **exponentially** quickly? You should model
+their growth rate to be sure.
+
+Although you know nothing about this specific species of lanternfish, you make
+some guesses about their attributes. Surely, each lanternfish creates a new
+lanternfish once every **`7`** days.
+
+However, this process isn't necessarily synchronized between every lanternfish
+- one lanternfish might have 2 days left until it creates another lanternfish,
+while another might have 4. So, you can model each fish as a single number that
+represents **the number of days until it creates a new lanternfish**.
+
+Furthermore, you reason, a **new** lanternfish would surely need slightly
+longer before it's capable of producing more lanternfish: two more days for its
+first cycle.
+
+So, suppose you have a lanternfish with an internal timer value of `3`:
+
+- After one day, its internal timer would become `2`.
+- After another day, its internal timer would become `1`.
+- After another day, its internal timer would become `0`.
+- After another day, its internal timer would reset to `6`, and it would create
+  a **new** lanternfish with an internal timer of `8`.
+- After another day, the first lanternfish would have an internal timer of `5`,
+  and the second lanternfish would have an internal timer of `7`.
+
+A lanternfish that creates a new fish resets its timer to `6`, **not** `7`
+(because `0` is included as a valid timer value). The new lanternfish starts
+with an internal timer of 8 and does not start counting down until the next
+day.
+
+Realizing what you're trying to do, the submarine automatically produces a list
+of the ages of several hundred nearby lanternfish (your puzzle input). For
+example, suppose you were given the following list:
+
+```
+3,4,3,1,2
+```
+
+This list means that the first fish has an internal timer of `3`, the second
+fish has an internal timer of `4`, and so on until the fifth fish, which has an
+internal timer of `2`. Simulating these fish over several days would proceed as
+follows:
+
+```
+Initial state: 3,4,3,1,2
+After  1 day:  2,3,2,0,1
+After  2 days: 1,2,1,6,0,8
+After  3 days: 0,1,0,5,6,7,8
+After  4 days: 6,0,6,4,5,6,7,8,8
+After  5 days: 5,6,5,3,4,5,6,7,7,8
+After  6 days: 4,5,4,2,3,4,5,6,6,7
+After  7 days: 3,4,3,1,2,3,4,5,5,6
+After  8 days: 2,3,2,0,1,2,3,4,4,5
+After  9 days: 1,2,1,6,0,1,2,3,3,4,8
+After 10 days: 0,1,0,5,6,0,1,2,2,3,7,8
+After 11 days: 6,0,6,4,5,6,0,1,1,2,6,7,8,8,8
+After 12 days: 5,6,5,3,4,5,6,0,0,1,5,6,7,7,7,8,8
+After 13 days: 4,5,4,2,3,4,5,6,6,0,4,5,6,6,6,7,7,8,8
+After 14 days: 3,4,3,1,2,3,4,5,5,6,3,4,5,5,5,6,6,7,7,8
+After 15 days: 2,3,2,0,1,2,3,4,4,5,2,3,4,4,4,5,5,6,6,7
+After 16 days: 1,2,1,6,0,1,2,3,3,4,1,2,3,3,3,4,4,5,5,6,8
+After 17 days: 0,1,0,5,6,0,1,2,2,3,0,1,2,2,2,3,3,4,4,5,7,8
+After 18 days: 6,0,6,4,5,6,0,1,1,2,6,0,1,1,1,2,2,3,3,4,6,7,8,8,8,8
+```
+
+Each day, a `0` becomes a 6 and adds a new `8` to the end of the list, while
+each other number decreases by `1` if it was present at the start of the day.
+
+In this example, after 18 days, there are a total of `26` fish. After 80 days,
+there would be a total of **`5934`**.
+
+Find a way to simulate lanternfish. **How many lanternfish would there be after
+80 days?**
+-}
+{-# LANGUAGE ParallelListComp #-}
+import Data.List
+import Data.List.Split
+
+{-
+-- Trivial solution for Part 1. Takes way too long for Part 2
+lanternfish :: Int -> String -> Int
+lanternfish n = length
+              . generations n
+              . (map (\x -> read x :: Int)) . (split (dropDelims $ oneOf [',']))
+  where generations :: Int -> [Int] -> [Int]
+        generations n ns = foldl (\xs x -> foldr rules [] xs) ns [1..n]
+
+        rules :: Int -> [Int] -> [Int]
+        rules x ns | x == 0    = 6 : 8 : ns
+                   | otherwise = x - 1 : ns
+-}
+
+lanternfish :: Int -> String -> Int
+lanternfish n = sum                                           -- Sum of Buckets
+              . generations n                                 -- Simulate days
+              . map snd . toLifecycle [(x,0) | x <- [0..8]]   -- Build Lifecycle buckets
+              . (map (\x -> read x :: Int))                   -- Read input
+              . (split (dropDelims $ oneOf [','])) 
+  where toLifecycle :: [(Int,Int)] -> [Int] -> [(Int,Int)]
+        toLifecycle buckets = foldr (\x xs -> addToBucket x xs) buckets 
+
+        -- There should be a better way of doing this
+        addToBucket :: Int -> [(Int,Int)] -> [(Int, Int)]
+        addToBucket 0 (                        (x,n):bs) =                          (x, n+1) : bs
+        addToBucket 1 (b0:                     (x,n):bs) = b0:                      (x, n+1) : bs
+        addToBucket 2 (b0:b1:                  (x,n):bs) = b0:b1:                   (x, n+1) : bs
+        addToBucket 3 (b0:b1:b2:               (x,n):bs) = b0:b1:b2:                (x, n+1) : bs
+        addToBucket 4 (b0:b1:b2:b3:            (x,n):bs) = b0:b1:b2:b3:             (x, n+1) : bs
+        addToBucket 5 (b0:b1:b2:b3:b4:         (x,n):bs) = b0:b1:b2:b3:b4:          (x, n+1) : bs
+        addToBucket 6 (b0:b1:b2:b3:b4:b5:      (x,n):bs) = b0:b1:b2:b3:b4:b5:       (x, n+1) : bs
+        addToBucket 7 (b0:b1:b2:b3:b4:b5:b6:   (x,n):bs) = b0:b1:b2:b3:b4:b5:b6:    (x, n+1) : bs
+        addToBucket 8 (b0:b1:b2:b3:b4:b5:b6:b7:(x,n):[]) = b0:b1:b2:b3:b4:b5:b6:b7: (x, n+1) : []
+
+        generations :: Int -> [Int] -> [Int]
+        generations n ns = foldl (\xs x -> rules xs) ns [1..n]
+
+        rules :: [Int] -> [Int]
+        rules (zeros:rest) = take 6 rest ++ [(head newrest) + zeros] ++ tail newrest ++ [zeros]
+          where newrest = drop 6 rest
+
+partOne :: String -> Int
+partOne = lanternfish 80
+
+{-
+## Part Two
+Suppose the lanternfish live forever and have unlimited food and space. Would
+they take over the entire ocean?
+
+After 256 days in the example above, there would be a total of
+**`26984457539`** lanternfish!
+
+**How many lanternfish would there be after 256 days?**
+-}
+
+partTwo :: String -> Int
+partTwo = lanternfish 256
+
+{-
+### Main
+-}
+main :: IO ()
+main = do
+  puzzle <- readFile "puzzle.aoc"
+  print "Part 1: How many lanternfish would there be after 80 days?"
+  print $ partOne puzzle
+  print "Part 2: How many lanternfish would there be after 256 days?"
+  print $ partTwo puzzle
