@@ -86,7 +86,7 @@ import Data.List.Split
 lanternfish :: Int -> String -> Int
 lanternfish n = length
               . generations n
-              . (map (\x -> read x :: Int)) . (split (dropDelims $ oneOf [',']))
+              . (map (\x -> read x :: Int)) . (splitOn ",")
   where generations :: Int -> [Int] -> [Int]
         generations n ns = foldl (\xs x -> foldr rules [] xs) ns [1..n]
 
@@ -100,7 +100,7 @@ lanternfish n = sum                                           -- Sum of Buckets
               . generations n                                 -- Simulate days
               . toLifecycle (replicate 9 0)                   -- Build Lifecycle buckets
               . (map (\x -> read x :: Int))                   -- Read input
-              . (split (dropDelims $ oneOf [','])) 
+              . (splitOn ",")
   where toLifecycle :: [Int] -> [Int] -> [Int]
         toLifecycle buckets = foldr (\x xs -> addToBucket x xs) buckets 
 
