@@ -11,6 +11,9 @@
 - Day 8<!--[Day 8](08/aoc2021-day08.md)-->
 - [Day 9](09/aoc2021-day09.md)
 - [Day 10](10/aoc2021-day10.md)
+- Day 11<!--[Day 11](11/aoc2021-day11.md)-->
+- Day 12<!--[Day 12](12/aoc2021-day12.md)-->
+- [Day 13](13/aoc2021-day13.md)
 
 ## Requirements
 - A Haskell installation (GHC)
